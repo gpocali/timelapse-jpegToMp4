@@ -30,7 +30,7 @@ if [ $error -eq 1 ]; then
 fi
 
 HOUR=24
-lastSeconds=$(date +%s)
+currentSeconds=$(date +%s)
 
 while true; do
     if [ $HOUR -ne $(date +%H) ]; then

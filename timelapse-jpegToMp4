@@ -34,6 +34,7 @@ lastSeconds=$(date +%s)
 
 while true; do
     if [ $HOUR -ne $(date +%H) ]; then
+        HOUR=$(date +%H)
         lastSeconds=$currentSeconds
         currentSeconds=$(date +%s)
         if [ $currentSeconds - $lastSeconds -gt 36120 ]; then # Check if transcoding took longer than 1 hour 2 minutes
@@ -42,6 +43,7 @@ while true; do
         current=/mnt/storage/$(date -d '1 hour ago' "+%Y/%m/%d/%H")
         echo Started Transcode of $current...
         for f in $(find $current -name "*.jpg" -print | sort); do echo "file '$f'" >> /tmp/fileList.txt; done && ffmpeg -safe 0 -f concat -i /tmp/fileList.txt -an -r $FRAME_RATE -y -vcodec libx265 $current/timelapse-$(echo $current | cut -d/ -f4)_$(echo $current | cut -d/ -f5)-$(echo $current | cut -d/ -f6)-$(echo $current | cut -d/ -f7).mp4 && cat /tmp/fileList.txt | cut -d"'" -f2 | xargs rm && rm /tmp/fileList.txt && echo Success. || echo Failed.
+        echo Process Time: $(($(date +%s)-$currentSeconds)) seconds.
     fi
     sleep 10;
 done

@@ -1,14 +1,14 @@
 #!/bin/ash
 echo $(date) - Starting Timelapse Record
 error=0
-FRAME_RATE=$(cat /etc/timelapse-recorder/input.conf | jq ".[\"outputFrameRate\"]" | cut -d'"' -f2 || echo "")
+FRAME_RATE=$(cat /etc/timelapse-jpegToMp4/input.conf | jq ".[\"outputFrameRate\"]" | cut -d'"' -f2 || echo "")
 if [[ "$FRAME_RATE" == "" ]]; then
 	echo frameRate must be defined in input.conf file.
 	error=1
 fi
 
 # Set default timezone if defined otherwise use UTC
-TIMEZONE=$(cat /etc/timelapse-recorder/input.conf | jq ".[\"timezone\"]" | cut -d'"' -f2 || echo "")
+TIMEZONE=$(cat /etc/timelapse-jpegToMp4/input.conf | jq ".[\"timezone\"]" | cut -d'"' -f2 || echo "")
 if [[ "$TIMEZONE" == "" ]]; then
 	echo timezone not defined in input.conf file, using UTC.
 	TIMEZONE=UTC

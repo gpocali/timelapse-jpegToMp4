@@ -1,0 +1,48 @@
+#!/bin/ash
+echo $(date) - Starting Timelapse Record
+error=0
+FRAME_RATE=$(cat /etc/timelapse-recorder/input.conf | jq ".[\"outputFrameRate\"]" | cut -d'"' -f2 || echo "")
+if [[ "$FRAME_RATE" == "" ]]; then
+	echo frameRate must be defined in input.conf file.
+	error=1
+fi
+
+# Set default timezone if defined otherwise use UTC
+TIMEZONE=$(cat /etc/timelapse-recorder/input.conf | jq ".[\"timezone\"]" | cut -d'"' -f2 || echo "")
+if [[ "$TIMEZONE" == "" ]]; then
+	echo timezone not defined in input.conf file, using UTC.
+	TIMEZONE=UTC
+else
+	if [ -e /usr/share/zoneinfo/$TIMEZONE ]; then
+		echo Using timezone: $TIMEZONE
+	else
+		echo Invalid timezone defined in input.conf file, using UTC.
+		TIMEZONE=UTC
+	fi
+fi
+date
+cp /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+echo $TIMEZONE >  /etc/timezone
+date
+
+if [ $error -eq 1 ]; then
+	exit 1
+fi
+
+HOUR=-1
+lastSeconds=$(date +%s)
+
+while true; do
+    if [ $HOUR -ne $(date +%H) ]; then
+        lastSeconds=$currentSeconds
+        currentSeconds=$(date +%s)
+        if [ $currentSeconds - $lastSeconds -gt 36120 ]; then # Check if transcoding took longer than 1 hour 2 minutes
+            echo ERROR: Process is slower than realtime.  Transcoding will skip to current hour.
+        fi
+        current=/mnt/storage/$(date -d '1 hour ago' "+%Y/%m/%d/%H")
+        echo Started Transcode of $current...
+        for f in $(find $current -name "*.jpg" -print | sort); do echo "file '$f'" >> /tmp/fileList.txt; done && ffmpeg -safe 0 -f concat -i /tmp/fileList.txt -an -r $FRAME_RATE -y -vcodec libx265 $current/timelapse-$(echo $current | cut -d/ -f4)_$(echo $current | cut -d/ -f5)-$(echo $current | cut -d/ -f6)-$(echo $current | cut -d/ -f7).mp4 && cat /tmp/fileList.txt | cut -d"'" -f2 | xargs rm && rm /tmp/fileList.txt && echo Success. || echo Failed.
+    fi
+    sleep 10;
+done
+exit 0

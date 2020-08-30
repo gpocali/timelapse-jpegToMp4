@@ -43,7 +43,7 @@ while true; do
         current=/mnt/storage/$(date -d '1 hour ago' "+%Y/%m/%d/%H")
         if [ $(find $current -name "*.jpg" -print | wc -l) -ne 0 ]; then
             echo Started Transcode of $current...
-            for f in $(find $current -name "*.jpg" -print | sort); do echo "file '$f'" >> /tmp/fileList.txt; done && ffmpeg -hide_banner -safe 0 -f concat -i /tmp/fileList.txt -an -r $FRAME_RATE -y -vcodec libx265 -preset ultrafast -pix_fmt yuv444p $current/timelapse-$(echo $current | cut -d/ -f4)-$(echo $current | cut -d/ -f5)-$(echo $current | cut -d/ -f6)_$(echo $current | cut -d/ -f7)_$(date +%Z).mp4 && cat /tmp/fileList.txt | cut -d"'" -f2 | xargs rm && rm /tmp/fileList.txt && echo Success. || echo Failed.
+            for f in $(find $current -name "*.jpg" -print | sort); do echo "file '$f'" >> /tmp/fileList.txt; done && ffmpeg -hide_banner -safe 0 -f concat -i /tmp/fileList.txt -an -r $FRAME_RATE -y -vcodec libx265 -pix_fmt yuv420p10le $current/timelapse-$(echo $current | cut -d/ -f4)-$(echo $current | cut -d/ -f5)-$(echo $current | cut -d/ -f6)_$(echo $current | cut -d/ -f7)_$(date +%Z).mp4 && cat /tmp/fileList.txt | cut -d"'" -f2 | xargs rm && rm /tmp/fileList.txt && echo Success. || echo Failed.
             echo Process Time: $(($(date +%s)-$currentSeconds)) seconds.
         else
             echo $current - No Files to transcode.

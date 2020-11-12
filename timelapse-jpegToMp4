@@ -32,6 +32,10 @@ fi
 HOUR=24
 currentSeconds=$(date +%s)
 
+if [ -e /tmp/fileList.txt ]; then
+    rm /tmp/fileList.txt
+fi
+
 while true; do
     if [ $HOUR -ne $(date +%H) ]; then
         HOUR=$(date +%H)

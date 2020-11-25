@@ -61,7 +61,7 @@ while true; do
         fi
         if [ $(find $current -name "*.jpg" -print | wc -l) -ne 0 ]; then
             echo Started Transcode of $current...
-            for f in $(find $current -name "*.jpg" -print | sort); do echo "file '$f'" >> /tmp/fileList$$.txt; done && timeout 36120 ffmpeg -hide_banner -safe 0 -f concat -i /tmp/fileList$$.txt -an -r $FRAME_RATE -y -vcodec libx265 -vf scale="trunc(iw/ohsub)*ohsub:trunc(ih/ovsub)*ovsub:force_original_aspect_ratio=decrease" -pix_fmt yuv420p10le $current/timelapse-$(echo $current | cut -d/ -f4)-$(echo $current | cut -d/ -f5)-$(echo $current | cut -d/ -f6)_$(echo $current | cut -d/ -f7)_$(date +%Z).mp4 && cat /tmp/fileList$$.txt | cut -d"'" -f2 | xargs rm && rm /tmp/fileList$$.txt && echo Success. || echo Failed.
+            for f in $(find $current -name "*.jpg" -print | sort); do echo "file '$f'" >> /tmp/fileList$$.txt; done && ffmpeg -hide_banner -safe 0 -f concat -i /tmp/fileList$$.txt -an -r $FRAME_RATE -y -vcodec libx265 -vf scale="trunc(iw/ohsub)*ohsub:trunc(ih/ovsub)*ovsub:force_original_aspect_ratio=decrease" -pix_fmt yuv420p10le $current/timelapse-$(echo $current | cut -d/ -f4)-$(echo $current | cut -d/ -f5)-$(echo $current | cut -d/ -f6)_$(echo $current | cut -d/ -f7)_$(date +%Z).mp4 && cat /tmp/fileList$$.txt | cut -d"'" -f2 | xargs rm && rm /tmp/fileList$$.txt && echo Success. || echo Failed.
             echo Process Time: $(($(date +%s)-$currentSeconds)) seconds.
         else
             echo $current - No Files to transcode.

@@ -54,7 +54,7 @@ while true; do
         if [ $post -gt 1 ]; then               
                 current=/mnt/storage/$(date -d "$post hour ago" "+%Y/%m/%d/%H")
                 currentYear=$(date -d "$post hour ago" "+%Y")
-                currentMonth=$(date -d "$post hour ago" "+m")
+                currentMonth=$(date -d "$post hour ago" "+%m")
                 currentDay=$(date -d "$post hour ago" "+%d")
                 currentHour=$(date -d "$post hour ago" "+%H")
                 currentTimezone=$(date -d "$post hour ago" "+%Z")
@@ -64,7 +64,7 @@ while true; do
         else                                                                                                             
                 current=/mnt/storage/$(date -d '1 hour ago' "+%Y/%m/%d/%H")
                 currentYear=$(date -d "1 hour ago" "+%Y")
-                currentMonth=$(date -d "1 hour ago" "+m")
+                currentMonth=$(date -d "1 hour ago" "+%m")
                 currentDay=$(date -d "1 hour ago" "+%d")
                 currentHour=$(date -d "1 hour ago" "+%H")
                 currentTimezone=$(date -d "1 hour ago" "+%Z")

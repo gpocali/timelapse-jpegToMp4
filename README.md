@@ -1,5 +1,5 @@
 # timelapse-jpegToMp4
- Transcode 1 hour delayed jpeg to mp4 (H.265) FFmpeg process.  This is a complement to the timelapse-downloader docker.
+ Transcode 1 hour delayed jpeg to mp4 (H.265) FFmpeg process.  This is a complement to the gpocali/timelapse-downloader docker.
  
 # input.conf
 Configuration Location: /etc/timelapse-recorder/input.conf
